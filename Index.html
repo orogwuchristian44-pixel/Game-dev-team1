@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>cipher games - Join</title>
+
+  <style>
+    body {
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
+      background: #eef1f8;
+      margin: 0;
+      padding: 24px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 720px;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 14px;
+      box-shadow: 0 10px 35px rgba(0, 0, 40, 0.08);
+    }
+
+    h1 { margin: 0 0 10px; }
+
+    .btn {
+      background: #0b76ff;
+      color: white;
+      padding: 12px 18px;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-block;
+      transition: 0.2s;
+    }
+
+    .btn:hover { background: #0059d3; }
+
+    .muted { color: #666; }
+
+    /* Modal */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 25px;
+      width: 90%;
+      max-width: 420px;
+      border-radius: 10px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .close {
+      float: right;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    /* Admin Panel */
+    #adminPanel {
+      display:none;
+      padding:20px;
+      max-width:800px;
+      margin:auto;
+    }
+
+    table {
+      width:100%;
+      background:white;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding:10px;
+      border:1px solid #ddd;
+      text-align:left;
+    }
+
+    th {
+      background:#0b76ff;
+      color:white;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h1>Welcome to cyrion studio</h1>
+    <p>
+      Through WhatsApp we will link software engineers to each other. We are looking for people with the skills listed below.
+    </p>
+
+    <h2>Developer Roles</h2>
+    <ul>
+      <li>Web Developer (optional)</li>
+      <li>App Developer (optional)</li>
+      <li>Game Developer</li>
+    </ul>
+
+    <h2>Roles Under App & Game Development</h2>
+    <ul>
+      <li>network programmer</li>
+      <li>coe game programmer</li>
+      <li>game designer</li>
+      <li>3D artist/animator</li>
+      <li>UI/UX & 2D artist</li>
+      <li>sound designer/QA</li>
+    </ul>
+
+    <button class="btn" onclick="openModal()">Apply</button>
+    <br><br>
+    <button class="btn" onclick="adminLogin()">Admin Login</button>
+
+    <p class="muted">Click to apply. A quick form will pop up.<br>
+      You will hot get paid immediatly, but when we make a game we each get paid according to our games profit
+    </p>
+    <h3>if accepted we will notify you via whatsapp</h3>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal" id="applyModal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h2>Application Form</h2>
+
+      <input type="text" id="name" placeholder="Full Name">
+      <input type="text" id="number" placeholder="WhatsApp Number">
+      <input type="text" id="age" placeholder="age">
+      
+      <select id="role">
+        <option value="">Select a Role</option>
+        <option>network programmer</option>
+        <option>coe game programmer</option>
+        <option>game designer</option>
+        <option>3D artist/animator</option>
+        <option>UI/UX & 2Ddesigner</option>
+        <option>sound Designer/QA</option>
+      </select>
+
+      <button class="btn" onclick="submitForm()">Submit</button>
+    </div>
+  </div>
+
+  <!-- ADMIN PANEL -->
+  <div id="adminPanel">
+    <h2>Admin Panel</h2>
+
+    <table id="appTable">
+      <tr>
+        <th>Name</th>
+        <th>Number</th>
+        <th>Role</th>
+        <th>Action</th>
+      </tr>
+    </table>
+
+    <button class="btn" onclick="logoutAdmin()">Logout</button>
+  </div>9
+  <script>
+    // Open & Close Modal
+    function openModal() {
+      document.getElementById("applyModal").style.display = "flex";
+    }
+    function closeModal() {
+      document.getElementById("applyModal").style.display = "none";
+    }
+
+    // Submit Form
+    function submitForm() {
+      const name = document.getElementById("name").value;
+      const number = document.getElementById("number").value;
+      const role = document.getElementById("role").value;
+      const age = document.getElementById("age").value;
+
+      if (!name || !number || !role || !age) {
+        alert("Please fill all fields.");
+        return;
+      }
+
+      // Save application in localStorage for Admin
+      let apps = JSON.parse(localStorage.getItem("applications") || "[]");
+      apps.push({ name, number, role, age });
+      localStorage.setItem("applications", JSON.stringify(apps));
+
+
+      alert("Application submitted!");
+      closeModal();
+    }
+
+    // Admin Login
+    function adminLogin() {
+      const pass = prompt("Enter admin password:");
+      if (pass === "hive123") {
+        loadApplications();
+        document.getElementById("adminPanel").style.display = "block";
+      } else {
+        alert("Wrong password.");
+      }
+    }
+
+    // Load applications in admin table
+    function loadApplications() {
+      const table = document.getElementById("appTable");
+      table.innerHTML = `
+        <tr>
+          <th>Name</th>
+          <th>Number</th>
+          <th>Role</th>
+          <th>age</th>
+          <th>Action</th>
+          
+        </tr>`;
+
+      const apps = JSON.parse(localStorage.getItem("applications") || "[]");
+
+      apps.forEach((app, i) => {
+        const row = `
+        <tr>
+          <td>${app.name}</td>
+          <td>${app.number}</td>
+          <td>${app.role}</td>
+          <<td>${app.age}</td>
+          <td><button onclick="deleteApp(${i})">Delete</button></td>
+        </tr>`;
+        table.innerHTML += row;
+      });
+    }
+
+    function deleteApp(index) {
+      let apps = JSON.parse(localStorage.getItem("applications"));
+      apps.splice(index, 1);
+      localStorage.setItem("applications", JSON.stringify(apps));
+      loadApplications();
+    }
+
+    function logoutAdmin() {
+      document.getElementById("adminPanel").style.display = "none";
+    }
+  </script>
+
+</body>
+</html>
